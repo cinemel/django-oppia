@@ -22,6 +22,7 @@ urlpatterns = [
     path('upload2/success', TemplateView.as_view(template_name="course/upload-success.html"), name="upload_success"),
 
     path('course/', views.CourseListView.as_view(), name="course"),
+    path('course_manage/', views.ManageCourseList.as_view(), name="course_manage"),
     path('course/category/<int:category_id>', views.CourseListView.as_view(), name="category_courses"),
     path('course/<int:course_id>/', views.CourseActivityDetail.as_view(), name="recent_activity"),
     path('course/<int:course_id>/edit/', views.EditCourse.as_view(), name="course_edit"),
@@ -42,7 +43,7 @@ urlpatterns = [
          name="feedback_response_detail"),
 
     path('cohort/', views.CohortListView.as_view(), name="cohorts"),
-    path('cohort/add/', views.cohort_add, name="cohort_add"),
+    path('cohort/add/', views.AddCohortView.as_view(), name="cohort_add"),
     path('cohort/<int:pk>/edit/', views.CohortEditView.as_view(), name="cohort_edit"),
     path('cohort/<int:pk>/view/', views.CohortDetailView.as_view(), name="cohort_view"),
     path('cohort/<int:cohort_id>/<int:course_id>/view/', views.cohort_course_view, name="cohort_course_view"),

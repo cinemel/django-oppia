@@ -14,13 +14,21 @@ class CourseActivityView(BaseReportTemplateView):
 
     template_name = 'reports/course_activity.html'
 
+    def get_daily_activity(self, start_date, end_date):
+        no_days = (end_date - start_date).days + 1
+        activity = []
+
+        for i in range(0, no_days, +1):
+            temp = start_date + datetime.timedelta(days=i)
+            count = CourseDailyStats.objects.filter(day=temp).aggregate(count=Sum('total'))['count']
+            if count is None:
+                count = 0
+            activity.append({'day':temp, 'count':count})
+        return activity
+
     def get_graph_data(self, start_date, end_date):
 
-        daily_activity = CourseDailyStats.objects \
-            .filter(day__gte=start_date, day__lte=end_date) \
-            .values('day') \
-            .annotate(count=Sum('total')) \
-            .order_by('day')
+        daily_activity = self.get_daily_activity(start_date, end_date)
 
         course_activity = CourseDailyStats.objects \
             .filter(day__gte=start_date, day__lte=end_date) \
@@ -62,7 +70,7 @@ class CourseActivityView(BaseReportTemplateView):
             hits_percent = float(other_course_activity * 100.0 / total_hits)
             hot_courses.append({'course': _('Other'),
                                 'hits_percent': hits_percent})
-        return  {
+        return {
             'daily_activity': daily_activity,
             'course_activity': course_activity,
             'previous_course_activity': previous_course_activity,
